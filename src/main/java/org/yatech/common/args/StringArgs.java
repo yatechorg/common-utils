@@ -8,7 +8,11 @@ import static org.yatech.common.args.Args.requireSatisfies;
 /**
  * @author Yinon Avraham.
  */
-public class StringArgs {
+public abstract class StringArgs {
+
+    private StringArgs() {
+        //utility
+    }
 
     public static final Pattern WHITESPACES_ONLY = Pattern.compile("\\s+");
 
