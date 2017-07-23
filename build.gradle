@@ -1,0 +1,172 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' // cobertura plugin
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0' // coveralls plugin
+    }
+}
+
+plugins {
+    id "com.jfrog.artifactory" version "4.0.0"
+    id "com.jfrog.bintray" version "1.6"
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'idea'
+apply plugin: 'project-report'
+apply plugin: 'cobertura'
+apply plugin: 'com.github.kt3k.coveralls'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+tasks.withType(Test) {
+    reports.html.destination = file("${reporting.baseDir}/${name}")
+}
+
+test {
+    testLogging.showStandardStreams = true
+}
+
+cobertura.coverageFormats = ['html', 'xml']
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    testCompile 'org.objenesis:objenesis:2.1'
+    testCompile 'cglib:cglib-nodep:2.2'
+}
+
+group = groupId
+version = versionId
+
+jar {
+    manifest {
+        def jarVersion = versionId
+        attributes 'Specification-Title': jarTitle, 'Specification-Version': jarVersion, 'Specification-Vendor': jarVendor
+        attributes 'Implementation-Title': jarTitle, 'Implementation-Version': jarVersion, 'Implementation-Vendor': jarVendor
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar {
+                classifier 'sources'
+            }
+            artifact javadocJar {
+                classifier 'javadoc'
+            }
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name',bintrayPackage)
+                root.appendNode('description',bintrayPackageDescription)
+                root.appendNode('url',githubPagesUrl)
+                def license = root.appendNode('licenses').appendNode('license')
+                license.appendNode('name','The MIT License (MIT)')
+                license.appendNode('url','http://opensource.org/licenses/mit-license.php')
+                license.appendNode('distribution','repo')
+                def scm = root.appendNode('scm')
+                scm.appendNode('url', githubUrl)
+                scm.appendNode('connection', 'scm:' + githubUrl + '.git')
+                scm.appendNode('developerConnection', 'scm:git://github.com/yatechorg/common-utils.git')
+                def developer = root.appendNode('developers').appendNode('developer')
+                developer.appendNode('id', 'yinonavraham')
+                developer.appendNode('name', 'Yinon Avraham')
+                developer.appendNode('email', 'yinon at yatech dot org')
+            }
+        }
+    }
+}
+
+def bintrayUser = System.properties.BINTRAY_USER ?: System.env.BINTRAY_USER
+def bintrayApiKey = System.properties.BINTRAY_API_KEY ?: System.env.BINTRAY_API_KEY
+
+def bintrayVersion = versionId
+
+bintray {
+    user = bintrayUser
+    key = bintrayApiKey
+
+    publications = ['mavenJava']
+    dryRun = false //Whether to run this as dry-run, without deploying
+    publish = false //If version should be auto published after an upload
+    pkg {
+        userOrg = bintrayOwner
+        repo = bintrayRepo
+        name = bintrayPackage
+        desc = bintrayPackageDescription
+        websiteUrl = githubPagesUrl
+        issueTrackerUrl = "${githubUrl}/issues"
+        vcsUrl = "${githubUrl}.git"
+        licenses = ['MIT']
+        labels = ['common', 'args']
+        publicDownloadNumbers = true
+        //Optional version descriptor
+        version {
+            name = bintrayVersion
+            vcsTag = "v${bintrayVersion}"
+        }
+    }
+}
+
+artifactory_user = bintrayUser
+artifactory_password = bintrayApiKey
+//println "artifactory: user='$artifactory_user', password='${artifactory_password.substring(0,4)}${def s = ''; for (int i=4; i < artifactory_password.length()-4; i++) s += '*'; s}${artifactory_password.substring(artifactory_password.length()-4)}'"
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'oss-snapshot-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+        defaults {
+            publications('mavenJava')
+            publishArtifacts = true
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.6' //version required
+}
+
+task publishSnapshotOrRelease {
+    if (versionId.endsWith('-SNAPSHOT')) {
+        dependsOn('artifactoryPublish')
+    } else {
+        dependsOn('bintrayUpload')
+    }
+}
+
+task getVersion << {
+    println version
+}
