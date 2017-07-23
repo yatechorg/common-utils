@@ -3,7 +3,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-        //classpath 'net.saliman:gradle-cobertura-plugin:2.3.1' // cobertura plugin
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1' // coveralls plugin
     }
 }
@@ -20,7 +19,6 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'idea'
 apply plugin: 'project-report'
-//apply plugin: 'cobertura'
 apply plugin: 'com.github.kt3k.coveralls'
 
 sourceCompatibility = 1.8
@@ -40,8 +38,6 @@ tasks.withType(Test) {
 test {
     testLogging.showStandardStreams = true
 }
-
-//cobertura.coverageFormats = ['html', 'xml']
 
 repositories {
     jcenter()
