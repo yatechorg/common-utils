@@ -22,7 +22,7 @@ apply plugin: 'project-report'
 apply plugin: 'cobertura'
 apply plugin: 'com.github.kt3k.coveralls'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 version = '1.0'
 
 tasks.withType(Test) {
@@ -40,6 +40,7 @@ repositories {
 }
 
 dependencies {
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
 
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile 'org.objenesis:objenesis:2.1'
