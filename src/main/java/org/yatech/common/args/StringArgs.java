@@ -14,11 +14,15 @@ public abstract class StringArgs {
         //utility
     }
 
+    /**
+     * A pattern for matching only whitespaces
+     */
     public static final Pattern WHITESPACES_ONLY = Pattern.compile("\\s+");
 
     /**
      * Require that the given value is non-blank (not whitespaces only)
-     * @param value the value to check
+     *
+     * @param value   the value to check
      * @param message the error message to use
      * @return the value if satisfies the requirement
      * @throws IllegalArgumentException if the value does not satisfy the requirement
@@ -30,7 +34,8 @@ public abstract class StringArgs {
 
     /**
      * Require that the given value is not empty
-     * @param value the value to check
+     *
+     * @param value   the value to check
      * @param message the error message to use
      * @return the value if satisfies the requirement
      * @throws IllegalArgumentException if the value does not satisfy the requirement
@@ -42,7 +47,8 @@ public abstract class StringArgs {
 
     /**
      * Require that the given value matches the given pattern
-     * @param value the value to check
+     *
+     * @param value   the value to check
      * @param pattern the pattern to match
      * @param message the error message to use
      * @return the value if satisfies the requirement
