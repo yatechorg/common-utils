@@ -10,7 +10,7 @@ See [Wiki](https://github.com/yatechorg/common-utils/wiki) for more details and 
 ## Highlights
 
 ### *requireX* - Argument Requirements
-A set of argument requirement methods, based on the form of the `Objects.requireNonNull` methods introduced in JDK 8. For example:
+A set of argument requirement methods, based on the form of the `Objects.requireNonNull` methods introduced in JDK 8. For example:  
 
 ```java
 public class Person {
@@ -23,5 +23,5 @@ public class Person {
   }
 }
 ```
-
+  
 See more details in the [requireX](https://github.com/yatechorg/common-utils/wiki/requireX---Argument-Requirements) wiki page.
