@@ -23,3 +23,5 @@ public class Person {
   }
 }
 ```
+
+See more details in the [requireX](https://github.com/yatechorg/common-utils/wiki/requireX---Argument-Requirements) wiki page.
