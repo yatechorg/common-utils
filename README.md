@@ -4,4 +4,6 @@
 [![Sputnik](https://sputnik.ci/conf/badge)](https://sputnik.ci/app#/builds/yatechorg/common-utils)
 
 # common-utils
-A collection of common Java utilities
+A collection of common Java utilities.  
+
+See [Wiki](https://github.com/yatechorg/common-utils/wiki) for more details and documentation.
